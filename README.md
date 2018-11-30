@@ -1,12 +1,16 @@
-# Intro
+# Introduction
 
-Database Abstraction Layer for PHP
+Database Abstraction Layer for PHP.
 
-Currently supports only mysql
+Currently supports only mysql driver using mysqli.
+
+# Requirements
+
+PHP7, mysqli for Mysql support.
 
 # License
 
-Copyright (c) 2009-2013 Nikolay Neizvesny
+Copyright (c) 2009-2018 Nikolay Neizvesny
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

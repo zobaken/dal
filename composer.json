@@ -1,0 +1,19 @@
+{
+  "name": "zobaken/dal",
+  "version": "0.0.2",
+  "description": "PHP database abstraction layer",
+  "type": "library",
+  "license": "MIT",
+  "require": { },
+  "autoload": {
+    "files": [
+      "src/dal.php"
+    ],
+    "psr-4": {
+      "Dal\\": "src/dal/"
+    }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "7"
+  }
+}
