@@ -31,11 +31,11 @@ function dbdate($time = false) {
  *
  * A shortcut for @see \Dal\Dal::getQuery method.
  *
- * @param string $profile
+ * @param string|null $profile
  * @return \Dal\Query\Basic
  * @throws \Dal\Exception
  */
-function db($profile = 'default') {
+function db($profile = null) {
     return \Dal\Dal::getQuery($profile);
 }
 
@@ -60,3 +60,46 @@ function uint() {
     return mt_rand() << 16 | time();
 }
 
+// Some common functions
+
+if (!function_exists('associate')) {
+    /**
+     * Get associative array of objects
+     * @param array $array Array of objects
+     * @param string $key Object property used for array key
+     * @return array
+     */
+    function associate($array, $key)
+    {
+        $result = [];
+        foreach ($array as $obj) {
+            if (isset($obj->$key) && $obj->$key !== null) {
+                $result[$obj->$key] = $obj;
+            } elseif (isset($obj[$key]) && $obj[$key] !== null) {
+                $result[$obj[$key]] = $obj;
+            }
+        }
+        return $result;
+    }
+
+}
+
+if (!function_exists('column')) {
+    /**
+     * Get array of fields from array of objects
+     * @param array $array
+     * @param string $field
+     * @return array
+     */
+    function column($array, $field)
+    {
+        $res = array();
+        foreach ($array as $r) {
+            if (!empty($r->$field)) {
+                $res [] = $r->$field;
+            }
+        }
+        return $res;
+    }
+
+}

@@ -7,21 +7,30 @@ namespace Dal\Query;
  *
  * @TODO Add 'insertRow', 'updateRow' methods
  *
- * @method \Dal\Query\Basic select(...$arguments) Select statement
- * @method \Dal\Query\Basic insert(...$arguments) Select statement
- * @method \Dal\Query\Basic into(...$arguments) Select statement
- * @method \Dal\Query\Basic insertInto(...$arguments) Select statement
- * @method \Dal\Query\Basic update(...$arguments) Select statement
- * @method \Dal\Query\Basic replace(...$arguments) Select statement
+ * @method \Dal\Query\Basic and(...$arguments) Select statement
+ * @method \Dal\Query\Basic begin(...$arguments) Select statement
+ * @method \Dal\Query\Basic commit(...$arguments) Select statement
+ * @method \Dal\Query\Basic create(...$arguments) Select statement
+ * @method \Dal\Query\Basic createDatabase(...$arguments) Select statement
+ * @method \Dal\Query\Basic createTable(...$arguments) Select statement
  * @method \Dal\Query\Basic delete(...$arguments) Select statement
  * @method \Dal\Query\Basic deleteFrom(...$arguments) Select statement
+ * @method \Dal\Query\Basic drop(...$arguments) Select statement
+ * @method \Dal\Query\Basic dropDatabase(...$arguments) Select statement
+ * @method \Dal\Query\Basic dropTable(...$arguments) Select statement
  * @method \Dal\Query\Basic from(...$arguments) Select statement
- * @method \Dal\Query\Basic where(...$arguments) Select statement
- * @method \Dal\Query\Basic and(...$arguments) Select statement
- * @method \Dal\Query\Basic or(...$arguments) Select statement
+ * @method \Dal\Query\Basic insert(...$arguments) Select statement
+ * @method \Dal\Query\Basic insertInto(...$arguments) Select statement
+ * @method \Dal\Query\Basic into(...$arguments) Select statement
  * @method \Dal\Query\Basic not(...$arguments) Select statement
  * @method \Dal\Query\Basic null(...$arguments) Select statement
+ * @method \Dal\Query\Basic or(...$arguments) Select statement
+ * @method \Dal\Query\Basic replace(...$arguments) Select statement
+ * @method \Dal\Query\Basic rollback(...$arguments) Select statement
+ * @method \Dal\Query\Basic select(...$arguments) Select statement
  * @method \Dal\Query\Basic set(...$arguments) Select statement
+ * @method \Dal\Query\Basic update(...$arguments) Select statement
+ * @method \Dal\Query\Basic where(...$arguments) Select statement
  */
 abstract class Basic {
 

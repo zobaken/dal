@@ -5,17 +5,17 @@
 namespace Dal\Query;
 
 /**
- * Mysql implementation
+ * Pgsql implementation
  */
-class Mysql extends Basic {
+class Pgsql extends Basic {
 
     /**
-     * @var \Mysqli mysql connection
+     * @var resource Postgres connection resource
      */
     public $connection = null;
 
     /**
-     * @var \mysqli_result
+     * @var resource
      */
     public $result = null;
 
@@ -24,42 +24,58 @@ class Mysql extends Basic {
      * @param object $init Configuration object (host, user, password, dbname) or Dal\mysql
      */
     public function __construct($init = null) {
-        if (get_class($init) == 'Dal\Query\Mysql') {
+        if (get_class($init) == 'Dal\Query\Pgsql') {
             $this->cfg = $init->cfg;
             $this->connection = $init->connection;
+            $this->result = $init->result;
         } else {
             $this->cfg = $init;
-        }
+    }
     }
 
     /**
      * Create new query with same connection
-     * @return Mysql
+     * @return Pgsql
      */
     public function __invoke() {
-        $copy = new Mysql($this);
+        $copy = new Pgsql($this);
         return $copy;
+    }
+
+    /**
+     * Get connection string from configuration
+     */
+    protected function getConnectionString() {
+        $connectionArray = (array)$this->cfg;
+        $connectionArray = array_filter($connectionArray, function(&$value) {
+            return in_array($value, [
+                'host',
+                'user',
+                'password',
+                'dbname',
+            ]);
+        }, ARRAY_FILTER_USE_KEY);
+        array_walk($connectionArray, function(&$value, $key) {
+            $value = $key . "='" . addslashes($value) . "'";
+        });
+        $connectionString = implode(' ', array_values($connectionArray));
+        $connectionString .= ' options=\'--client_encoding=UTF8\'';
+        return $connectionString;
     }
 
     /**
      * Connect to database
      * @param object $cfg Configuration object (host, user, password, dbname)
-     * @return \Dal\Query\Mysql
+     * @return \Dal\Query\Pgsql
      * @throws \Dal\Exception
      */
     public function connect($cfg = null) {
         if ($cfg) $this->cfg = $cfg;
         if ($this->connection) return $this;
-        $this->connection = new \mysqli(
-            $this->cfg->host,
-            $this->cfg->user,
-            $this->cfg->password,
-            isset($this->cfg->dbname) ? $this->cfg->dbname : null
-        );
-        if (!$this->connection || $this->connection->connect_errno) {
-            throw new \Dal\Exception('Connection failed: ' . mysqli_connect_error());
+        $this->connection = \pg_connect($this->getConnectionString());
+        if (!$this->connection) {
+            throw new \Dal\Exception('Connection failed: ' . \pg_last_error());
         }
-        $this->connection->set_charset('utf8');
         return $this;
     }
 
@@ -67,7 +83,7 @@ class Mysql extends Basic {
      * Disconnect from database
      */
     public function disconnect() {
-        if ($this->connection) $this->connection->close();
+        if ($this->connection) \pg_close($this->connection);
     }
 
     /**
@@ -80,7 +96,7 @@ class Mysql extends Basic {
             $names = array_map(array($this, 'quoteName'), (array)$name);
             return implode(', ', $names);
         }
-        return '`' . $name . '`';
+        return '"' . \pg_escape_string($this->connection, $name) . '"';
     }
 
     /**
@@ -101,13 +117,13 @@ class Mysql extends Basic {
         if (!$this->connection) {
             $this->connect();
         }
-        return "'" . $this->connection->real_escape_string($val) . "'";
+        return "'" . \pg_escape_string($this->connection, $val) . "'";
     }
 
     /**
      * Select query
      * @param string $what
-     * @return \Dal\Query\Mysql
+     * @return \Dal\Query\Pgsql
      */
     public function select($what = '*') {
         $args = func_get_args();
@@ -117,7 +133,7 @@ class Mysql extends Basic {
 
     /**
      * Select all query
-     * @return \Dal\Query\Mysql
+     * @return \Dal\Query\Pgsql
      */
     public function selectFrom() {
         $args = func_get_args();
@@ -129,7 +145,7 @@ class Mysql extends Basic {
      * Limit query
      * @param int $limit
      * @param int $offset
-     * @return \Dal\Query\Mysql
+     * @return \Dal\Query\Pgsql
      */
     public function limit($limit, $offset = 0) {
         if ($offset) {
@@ -142,7 +158,7 @@ class Mysql extends Basic {
     /**
      * Execute query
      * @param bool $returnLastId Return last inserted id
-     * @return \mysqli_result|int
+     * @return \resource|int
      * @throws \Dal\Exception
      */
     public function exec($returnLastId = false) {
@@ -150,19 +166,12 @@ class Mysql extends Basic {
         if (!$this->connection) {
             $this->connect();
         }
-        $this->result = @$this->connection->query($sql);
-
-        if (!$this->result && substr_count($this->connection->error, 'gone away')) {
-            $this->connection = null;
-            $this->connect();
-            $this->exec($returnLastId);
-        }
+        $this->result = \pg_query($this->connection, $sql);
 
         $this->sql = '';
         $this->classname = null;
         if (!$this->result) {
-            throw new \Dal\Exception(sprintf("MySQL ERROR: %s, SQL: %s", $this->connection->error, $sql),
-                $this->connection->errno);
+            throw new \Dal\Exception(sprintf("MySQL ERROR: %s, SQL: %s", \pg_last_error($this->connection), $sql));
         }
         return $returnLastId ? $this->lastId() : $this->result;
     }
@@ -172,7 +181,7 @@ class Mysql extends Basic {
      * @return mixed
      */
     public function lastId() {
-        return $this->connection->insert_id;
+        return $this->query('SELECT LASTVAL()')->fetchCell();
     }
 
     /**
@@ -180,7 +189,7 @@ class Mysql extends Basic {
      * @return int
      */
     public function affectedRows() {
-        return $this->connection->affected_rows;
+        return \pg_affected_rows($this->result);
     }
 
     /**
@@ -190,43 +199,55 @@ class Mysql extends Basic {
      */
     public function fetchCell() {
         $this->exec();
-        $row = $this->result->fetch_row();
-        return $row[0];
+        if (\pg_num_rows($this->result)) {
+            $result = \pg_fetch_result($this->result, 0, 0);
+            return $result;
+        }
+        return null;
     }
 
     /**
      * Fetch row as object
      * @param string $class Result type
-     * @return object
+     * @return object|null
      * @throws \Dal\Exception
      */
     public function fetchObject($class = null) {
         if (!$class) $class = $this->classname;
         $this->exec();
-        $row = $class ? $this->result->fetch_object($class)
-            : $this->result->fetch_object();
+        $row = $class ? \pg_fetch_object($this->result, null, $class)
+            : \pg_fetch_object($this->result);
+        if ($row === false) {
+            $row = null;
+        }
         return $row;
     }
 
     /**
      * Fetch row as array
-     * @return array
+     * @return array|null
      * @throws \Dal\Exception
      */
     public function fetchArray() {
         $this->exec();
-        $row = $this->result->fetch_row();
+        $row = \pg_fetch_row($this->result);
+        if ($row === false) {
+            $row = null;
+        }
         return $row;
     }
 
     /**
      * Fetch row as associative array
-     * @return array
+     * @return array|null
      * @throws \Dal\Exception
      */
     public function fetchAssoc() {
         $this->exec();
-        $row = $this->result->fetch_assoc();
+        $row = \pg_fetch_assoc($this->result);
+        if ($row === false) {
+            $row = null;
+        }
         return $row;
     }
 
@@ -240,8 +261,8 @@ class Mysql extends Basic {
         if (!$class) $class = $this->classname;
         $this->exec();
         $res = [];
-        while ($row = $class ? $this->result->fetch_object($class)
-            : $this->result->fetch_object()) {
+        while ($row = ($class ? \pg_fetch_object($this->result, null, $class)
+            : \pg_fetch_object($this->result))) {
             $res []= $row;
         }
         return $res;
@@ -254,7 +275,10 @@ class Mysql extends Basic {
      */
     public function fetchAllArray() {
         $this->exec();
-        $res = $this->result->fetch_all(MYSQLI_NUM);
+        $res = \pg_fetch_all($this->result, PGSQL_NUM);
+        if ($res === false) {
+            $res = [];
+        }
         return $res;
     }
 
@@ -265,7 +289,10 @@ class Mysql extends Basic {
      */
     public function fetchAllAssoc() {
         $this->exec();
-        $res = $this->result->fetch_all(MYSQLI_ASSOC);
+        $res = \pg_fetch_all($this->result, PGSQL_ASSOC);
+        if ($res === false) {
+            $res = [];
+        }
         return $res;
     }
 
@@ -276,9 +303,14 @@ class Mysql extends Basic {
      * @throws \Dal\Exception
      */
     public function fetchColumn($column = 0) {
+        $this->exec();
+        if (!\pg_num_rows($this->result)) return [];
+        if (is_int($column)) {
+            return \pg_fetch_all_columns($this->result, $column);
+        }
         return array_map(function ($row) use ($column) {
             return $row[$column];
-        }, is_int($column) ? $this->fetchAllArray() : $this->fetchAllAssoc());
+        }, $this->fetchAllAssoc());
     }
 
     // Useless methods

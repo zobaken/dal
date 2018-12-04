@@ -11,11 +11,13 @@ class Basic
     var $profile;
     var $config;
     var $rootPath;
+    var $dbname;
 
-    function __construct($config, $rootPath, $profile = 'default') {
+    function __construct($config, $rootPath, $profile = 'default', $dbname = null) {
         $this->config = $config->{$profile};
         $this->rootPath = $rootPath;
         $this->profile = $profile;
+        $this->dbname = $dbname;
     }
 
     function getTableClassName($tableName) {
@@ -39,10 +41,7 @@ class Basic
 
     function namespaceToPath($namespace) {
         $path = explode('\\', $namespace);
-        array_walk($path, function(&$a) {
-            $a = strtolower($a);
-        });
-        return implode('/', $path);
+        return '/' . implode('/', $path);
     }
 
 }
