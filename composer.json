@@ -1,6 +1,6 @@
 {
   "name": "zobaken/dal",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "PHP database abstraction layer",
   "type": "library",
   "license": "MIT",

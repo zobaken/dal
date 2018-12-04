@@ -14,7 +14,8 @@ class Mysql extends Basic {
      */
     function run() {
 
-        $tables = db($this->profile)->query("SHOW TABLES FROM #?", $this->config->dbname)->fetchAllArray();
+        $dbname = $this->dbname ?: $this->config->dbname;
+        $tables = db($this->profile)->query("SHOW TABLES FROM #?", $dbname)->fetchAllArray();
 
         foreach($tables as $tc){
             $tableName = $tc[0];
@@ -37,19 +38,17 @@ class Mysql extends Basic {
 
             if (isset($this->config->namespace)) {
                 $namespace = $this->config->namespace;
-                $namespacePath = explode('\\', $namespace);
-                $namespacePath[0] = strtolower($namespacePath[0]);
-                $namespacePath = implode('/', $namespacePath);
+                $namespacePath = $this->namespaceToPath($namespace);
             } else {
                 $namespace = null;
-                $namespacePath = 'classes';
+                $namespacePath = '';
             }
 
             ob_start();
             require DAL_PATH . '/templates/mysql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->rootPath . "/$namespacePath/Table/$tableClassName.php";
-            $classPath = $this->rootPath . "/$namespacePath/$className.php";
+            $tableClassPath = $this->rootPath . "$namespacePath/Table/$tableClassName.php";
+            $classPath = $this->rootPath . "$namespacePath/$className.php";
             if (!is_dir(dirname($tableClassPath))) {
                 mkdir(dirname($tableClassPath), 0755, true);
             }

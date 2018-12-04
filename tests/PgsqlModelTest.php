@@ -1,12 +1,12 @@
 <?php
 
-require_once __DIR__ . '/helper/MysqlHelper.php';
+require_once __DIR__ . '/helper/PgsqlHelper.php';
 
 use PHPUnit\Framework\TestCase;
 
-class MysqlModelTest extends TestCase {
+class PgsqlModelTest extends TestCase {
 
-    use MysqlHelper;
+    use PgsqlHelper;
 
     var $config;
 
@@ -20,26 +20,21 @@ class MysqlModelTest extends TestCase {
 
     function testGeneration() {
 
-        // Test create classes
-        if (is_dir(DAL_PATH . '/classes')) {
-            $this->removeDirectory(DAL_PATH . '/classes');
-        }
-        $this->createDatabase();
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Mysql($this->config, DAL_PATH . '/classes', 'default', $this->dbname);
+        $generator = new \Dal\Model\Generator\Pgsql($this->config, DAL_PATH . '/classes', 'pgsql', $this->dbname);
         $generator->run();
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Test.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/Test.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Test.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Table/Test.php'));
 
         // Test functionality
 
-        require_once DAL_PATH . '/classes/Test.php';
+        require_once DAL_PATH . '/classes/Space/Test.php';
 
-        $this->assertTrue(class_exists('Test'));
+        $this->assertTrue(class_exists('\Space\Test'));
 
         // Insert
 
-        $test = new Test();
+        $test = new \Space\Test();
         $test->name = 'test name';
         $test->created_ts = dbtime();
         $test->hash = md5('hash');
@@ -50,7 +45,7 @@ class MysqlModelTest extends TestCase {
 
         $test = null;
 
-        $test = Test::get($id);
+        $test = \Space\Test::get($id);
 
         $this->assertAttributeEquals('test name', 'name', $test);
         $this->assertAttributeEquals(md5('hash'), 'hash', $test);

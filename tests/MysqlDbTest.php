@@ -4,7 +4,7 @@ require_once  __DIR__ . '/helper/MysqlHelper.php';
 
 use PHPUnit\Framework\TestCase;
 
-class MysqlQueryTest extends TestCase {
+class MysqlDbTest extends TestCase {
 
     use MysqlHelper;
 
@@ -17,22 +17,23 @@ class MysqlQueryTest extends TestCase {
     }
 
     function testConnection() {
-        $databaseExists = db()->q('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', $this->config->default->dbname)->fetchCell();
+        Dal\Dal::setDefaultProfile('default');
+        $databaseExists = db()->q('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', $this->dbname)->fetchCell();
         if ($databaseExists) {
-            db()->dropDatabase($this->config->default->dbname)->exec();
+            db()->dropDatabase($this->dbname)->exec();
         }
-        $this->assertTrue(db()->createDatabase($this->config->default->dbname)->exec());
-        $this->assertTrue(db()->q('USE #?', $this->config->default->dbname)->exec());
+        $this->assertTrue(db()->createDatabase($this->dbname)->exec());
+        $this->assertTrue(db()->q('USE #?', $this->dbname)->exec());
     }
 
     function testCreateTable() {
         $this->assertTrue($this->createTestTable());
     }
 
-    function testInsert() {
+    function testInsertSelect() {
         $row = [
             'name' => 'test1',
-            'created_ts' => date('Y-m-d H:i:s'),
+            'created_ts' => dbtime(),
             'hash' => password_hash('password', PASSWORD_DEFAULT),
         ];
 
@@ -41,15 +42,8 @@ class MysqlQueryTest extends TestCase {
             ->exec(true);
         $this->assertEquals(db()->affectedRows(), 1);
         $this->assertTrue(is_numeric($id) && $id > 0);
-    }
 
-    function testSelect() {
-        $row = [
-            'id' => db()->lastId(),
-            'name' => 'test1',
-            'created_ts' => date('Y-m-d H:i:s'),
-            'hash' => password_hash('password', PASSWORD_DEFAULT),
-        ];
+        $row['id'] = db()->lastId();
 
         $result = db()->selectFrom('test')
             ->where('id = ?', $row['id'])

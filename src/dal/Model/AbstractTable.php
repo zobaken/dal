@@ -7,14 +7,17 @@ namespace Dal\Model;
  */
 class AbstractTable {
 
+    /** @var  string Table name */
+    static $table;
+
     /** @var array Primary key */
     static $pk;
 
+    /** @var  array sequence fields */
+    static $sequences;
+
     /** @var  array Generated fields */
     static $generated;
-
-    /** @var  string Table name */
-    static $table;
 
     /**
      * Insert object into database
@@ -24,7 +27,7 @@ class AbstractTable {
      */
     function insert($returnLastId = false) {
         $this->generateFields();
-        return self::queryInsertRow((array)$this)->exec($returnLastId);
+        return static::queryInsertRow((array)$this)->exec($returnLastId);
     }
 
     /**
@@ -33,7 +36,7 @@ class AbstractTable {
      * @throws \Dal\Exception
      */
     function update() {
-        $q = self::queryUpdateRow((array)$this);
+        $q = static::queryUpdateRow((array)$this);
         static::generateWhere($q, $this->getId());
         $q->exec();
         return $q->affectedRows();
@@ -44,7 +47,7 @@ class AbstractTable {
      * @throws \Dal\Exception
      */
     function replace() {
-        self::queryReplaceRow((array)$this)->exec();
+        static::queryReplaceRow((array)$this)->exec();
     }
 
     /**
@@ -267,12 +270,15 @@ class AbstractTable {
      * @throws \Dal\Exception
      */
     static function queryInsertRow($fields) {
-        $db = db()->insertInto(static::$table);
-        $q = [];
-        foreach($fields as $k=>$v) {
-            $q []= $db->quoteName($k) . '=' . $db->quote($v);
+        if (static::$sequences) {
+            foreach (static::$sequences as $seq) {
+                if (array_key_exists($seq, $fields) && is_null($fields[$seq])) {
+                    unset($fields[$seq]);
+                }
+            }
         }
-        return $db->set(implode(',', $q));
+        $db = db()->insertInto(static::$table);
+        return $db->query('(#?) VALUES (?)', array_keys($fields), array_values($fields));
     }
 
     /**
@@ -286,7 +292,7 @@ class AbstractTable {
         if (count($key) == 1 && is_array($key[0]))
             $key = $key[0];
         if (is_array(static::$pk)) {
-            $db->where('1');
+            $db->where('true');
             foreach (static::$pk as $i=>$pkname) {
                 $db->q('AND #? = ?', $pkname, $key[$i]);
             }

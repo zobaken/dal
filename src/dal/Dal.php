@@ -21,13 +21,18 @@ class Dal
     protected static $queryPool = [];
 
     /**
+     * @var string Default database profile
+     */
+    protected static $defaultProfile = 'default';
+
+    /**
      * Set database configuration
      *
      * $configuration object should contain property
      * with same name as profile object used in @see getQuery method.
      *
      * Each profile should contain 'host', 'user', 'password', 'dbname' and 'driver' properties.
-     * 'driver' property currently should be 'mysql'.
+     * 'driver' property can be 'mysql' or 'pgsql'.
      *
      * @param object $configuration
      */
@@ -36,15 +41,26 @@ class Dal
     }
 
     /**
+     * Set default profile for using with getQuery method
+     * @param $profile Profile name
+     */
+    public static function setDefaultProfile($profile) {
+        static::$defaultProfile = $profile;
+    }
+
+    /**
      * Get database query.
      *
      * Configuration profile should be set before calling this method. @see setConfiguration.
      *
-     * @param string $profile Profile to use
+     * @param string|null $profile Profile to use
      * @return \Dal\Query\Basic A new query object
      * @throws \Dal\Exception
      */
-    public static function getQuery($profile = 'default') {
+    public static function getQuery($profile = null) {
+        if (!$profile) {
+            $profile = static::$defaultProfile;
+        }
         if (isset(static::$queryPool[$profile])) {
             return static::$queryPool[$profile] = (static::$queryPool[$profile])();
         } else {
@@ -64,6 +80,7 @@ class Dal
     public static function reset() {
         static::$queryPool = [];
         static::$configuration = null;
+        static::$defaultProfile = 'default';
     }
 
 }
