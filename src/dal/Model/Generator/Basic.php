@@ -14,6 +14,7 @@ class Basic
     var $dbname;
 
     function __construct($config, $rootPath, $profile = 'default', $dbname = null) {
+        \Dal\Dal::setConfiguration($config);
         $this->config = $config->{$profile};
         $this->rootPath = $rootPath;
         $this->profile = $profile;

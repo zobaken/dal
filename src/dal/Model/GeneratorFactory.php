@@ -1,6 +1,7 @@
 <?php
 
 namespace Dal\Model;
+use \Dal\Exception;
 
 /**
  * Class GeneratorFactory
@@ -15,7 +16,11 @@ class GeneratorFactory
      * @return mixed
      */
     static function createGenerator($config, $rootPath, $profile, $dbname = null) {
-        $className = "\\Dal\\Model\\Generator\\{$config->driver}";
+        if (empty($config->$profile)) {
+            throw new Exception('Profile not found');
+        }
+        $className = ucfirst($config->$profile->driver);
+        $className = "\\Dal\\Model\\Generator\\$className";
         return new $className($config, $rootPath, $profile, $dbname);
     }
 
