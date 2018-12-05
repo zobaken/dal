@@ -83,7 +83,7 @@ class Pgsql extends Basic
             ob_start();
             require DAL_PATH . '/templates/pgsql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->rootPath . "$namespacePath/Table/$tableClassName.php";
+            $tableClassPath = $this->rootPath . "$namespacePath/Table/{$tableClassName}Prototype.php";
             $classPath = $this->rootPath . "$namespacePath/$className.php";
             if (!is_dir(dirname($tableClassPath))) {
                 mkdir(dirname($tableClassPath), 0755, true);

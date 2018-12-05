@@ -7,8 +7,8 @@
 namespace <?=$namespace?>;
 <?php endif; ?>
 
-require_once __DIR__ . '/Table/<?=$tableClassName?>.php';
+require_once __DIR__ . '/Table/<?=$tableClassName?>Prototype.php';
 
-class <?=$className?> extends Table\<?=$tableClassName?> {
+class <?=$className?> extends Table\<?=$tableClassName?>Prototype {
 
 }

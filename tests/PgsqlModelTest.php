@@ -24,7 +24,7 @@ class PgsqlModelTest extends TestCase {
         $generator = new \Dal\Model\Generator\Pgsql($this->config, DAL_PATH . '/classes', 'pgsql', $this->dbname);
         $generator->run();
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Test.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Table/Test.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Table/TestPrototype.php'));
 
         // Test functionality
 

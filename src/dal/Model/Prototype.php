@@ -5,7 +5,7 @@ namespace Dal\Model;
 /**
  * Parent class for all database classes
  */
-class AbstractTable {
+class Prototype {
 
     /** @var  string Table name */
     static $table;
@@ -120,7 +120,7 @@ class AbstractTable {
     /**
      * Get object from database
      * @param mixed $id
-     * @return AbstractTable|\stdClass
+     * @return Prototype|\stdClass
      * @throws \Dal\Exception
      */
     static function get($id) {
