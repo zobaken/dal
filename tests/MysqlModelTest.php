@@ -29,7 +29,7 @@ class MysqlModelTest extends TestCase {
         $generator = new \Dal\Model\Generator\Mysql($this->config, DAL_PATH . '/classes', 'default', $this->dbname);
         $generator->run();
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Test.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/Test.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/TestPrototype.php'));
 
         // Test functionality
 

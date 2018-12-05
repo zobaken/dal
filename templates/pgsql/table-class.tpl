@@ -9,7 +9,7 @@ namespace <?=$namespace?>\Table;
 namespace Table;
 <?php endif; ?>
 
-class <?=$tableClassName?> extends \Dal\Model\AbstractTable {
+class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
 
     static $columns;
     static $table = '<?=$tableName?>';
@@ -51,7 +51,7 @@ class <?=$tableClassName?> extends \Dal\Model\AbstractTable {
     * @return \<?=$namespace?>\<?=$className?>
     */
     static function get($id) {
-        return forward_static_call_array(['\Dal\Model\AbstractTable', 'get'], func_get_args());
+        return forward_static_call_array(['\Dal\Model\Prototype', 'get'], func_get_args());
     }
 
     /**
@@ -60,7 +60,7 @@ class <?=$tableClassName?> extends \Dal\Model\AbstractTable {
     * @return \<?=$namespace?>\<?=$className?>
     */
     static function getAll($order = null) {
-        return forward_static_call_array(['\Dal\Model\AbstractTable', 'get'], func_get_args());
+        return forward_static_call_array(['\Dal\Model\Prototype', 'get'], func_get_args());
     }
 
     /**
@@ -69,7 +69,7 @@ class <?=$tableClassName?> extends \Dal\Model\AbstractTable {
     * @return \<?=$namespace?>\<?=$className?>
     */
     static function findRow($where) {
-        return forward_static_call_array(['\Dal\Model\AbstractTable', 'findRow'], func_get_args());
+        return forward_static_call_array(['\Dal\Model\Prototype', 'findRow'], func_get_args());
     }
 
     /**
@@ -78,7 +78,7 @@ class <?=$tableClassName?> extends \Dal\Model\AbstractTable {
     * @return \<?=$namespace?>\<?=$className?>[]
     */
     static function find($where) {
-        return forward_static_call_array(['\Dal\Model\AbstractTable', 'find'], func_get_args());
+        return forward_static_call_array(['\Dal\Model\Prototype', 'find'], func_get_args());
     }
 
 }
