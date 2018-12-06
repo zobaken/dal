@@ -28,7 +28,7 @@ Query generator mimics SQL syntax:
 $rows = db()
     ->select('*')
     ->from('test')
-    ->where('created_ts', $time)
+    ->where('created_ts = ?', $time)
     ->fetchAssoc();
 ```
 
