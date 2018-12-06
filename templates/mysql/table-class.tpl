@@ -53,7 +53,7 @@ class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
     * @return \<?=$namespace?>\<?=$className?>
     */
     static function getAll($order = null) {
-        return forward_static_call_array(['\Dal\Model\Prototype', 'get'], func_get_args());
+        return forward_static_call_array(['\Dal\Model\Prototype', 'getAll'], func_get_args());
     }
 
     /**
