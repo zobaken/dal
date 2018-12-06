@@ -71,6 +71,9 @@ abstract class Basic {
         $text = preg_replace_callback('|#\?|', function() use (&$i, $args, $me) {
             return $me->quoteName($args[$i++]);
         }, $text);
+        $text = preg_replace_callback('|\!\?|', function() use (&$i, $args, $me) {
+            return $args[$i++];
+        }, $text);
         return preg_replace_callback('|\?|', function() use (&$i, $args, $me) {
             return $me->quote($args[$i++]);
         }, $text);
@@ -311,5 +314,11 @@ abstract class Basic {
      */
     abstract public function getAssoc($table, $field, $value);
 
+    /**
+     * Insert a row of data
+     * @param string $table
+     * @param array $row
+     */
+    abstract public function insertRow($table, $row);
 }
 

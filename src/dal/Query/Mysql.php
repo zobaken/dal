@@ -323,4 +323,15 @@ class Mysql extends Basic {
         return $this->fetchAssoc();
     }
 
+    /**
+     * Insert a row of data
+     * @param string $table
+     * @param array $row
+     */
+    public function insertRow($table, $row) {
+        $this->insertInto($table)
+            ->query('(#?) VALUES (?)', array_keys($row), array_values($row))
+            ->exec();
+    }
+
 }

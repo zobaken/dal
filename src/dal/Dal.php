@@ -34,9 +34,17 @@ class Dal
      * Each profile should contain 'host', 'user', 'password', 'dbname' and 'driver' properties.
      * 'driver' property can be 'mysql' or 'pgsql'.
      *
-     * @param object $configuration
+     * @param object|array $configuration
      */
     public static function setConfiguration($configuration) {
+        if (is_array($configuration)) {
+            $configuration = json_decode(json_encode($configuration));
+        }
+        if (isset($configuration->host)) {
+            $configuration = (object)[
+                'default' => $configuration
+            ];
+        }
         static::$configuration = $configuration;
     }
 
