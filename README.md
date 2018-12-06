@@ -8,7 +8,7 @@ Created to be simply as possible tool for creating and running SQL queries. Curr
 
 PHP7, mysqli extension for Mysql support. pgsql extension for postgres..
 
-#installation
+# installation
 
 Install it via composer:
 
