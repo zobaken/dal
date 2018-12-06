@@ -8,6 +8,14 @@ Created to be simply as possible tool for creating and running SQL queries. Curr
 
 PHP7, mysqli extension for Mysql support. pgsql extension for postgres..
 
+#installation
+
+Install it via composer:
+
+```
+composer require zobaken/daltron dev-master
+```
+
 # Query generator
 
 First we need to set configuration:
