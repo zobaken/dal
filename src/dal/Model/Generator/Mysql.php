@@ -44,11 +44,12 @@ class Mysql extends Basic {
                 $namespacePath = '';
             }
 
+            $profile = $this->profile;
             ob_start();
             require DAL_PATH . '/templates/mysql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->rootPath . "$namespacePath/Table/{$tableClassName}Prototype.php";
-            $classPath = $this->rootPath . "$namespacePath/$className.php";
+            $tableClassPath = $this->targetDir . "$namespacePath/Table/{$tableClassName}Prototype.php";
+            $classPath = $this->targetDir . "$namespacePath/$className.php";
             if (!is_dir(dirname($tableClassPath))) {
                 mkdir(dirname($tableClassPath), 0755, true);
             }

@@ -35,8 +35,7 @@ class PgsqlDbTest extends TestCase {
             'hash' => password_hash('password', PASSWORD_DEFAULT),
         ];
 
-        $id = db()->insertInto('test')
-            ->q('(#?) VALUES (?)', array_keys($row), array_values($row))
+        $id = db()->insertRow('test', $row)
             ->exec(true);
         $this->assertEquals(db()->affectedRows(), 1);
         $this->assertTrue(is_numeric($id) && $id > 0);

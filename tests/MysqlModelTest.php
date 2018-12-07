@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/helper/MysqlHelper.php';
 
 use PHPUnit\Framework\TestCase;
@@ -26,7 +27,7 @@ class MysqlModelTest extends TestCase {
         }
         $this->createDatabase();
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Mysql($this->config, DAL_PATH . '/classes', 'default', $this->dbname);
+        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default', $this->dbname);
         $generator->run();
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Test.php'));
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/TestPrototype.php'));
