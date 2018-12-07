@@ -1,5 +1,6 @@
 <?php
 
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/helper/PgsqlHelper.php';
 
 use PHPUnit\Framework\TestCase;
@@ -16,12 +17,23 @@ class PgsqlModelTest extends TestCase {
         $this->config = json_decode(file_get_contents(__DIR__ . '/helper/config.json'));
         Dal\Dal::reset();
         Dal\Dal::setConfiguration($this->config);
+        spl_autoload_register(function ($class) {
+            $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
+            $path = DAL_PATH . '/classes/' . $class . '.php';
+            if (file_exists($path)) {
+                require_once $path;
+            }
+        });
     }
 
     function testGeneration() {
 
+        if (is_dir(DAL_PATH . '/classes')) {
+            $this->removeDirectory(DAL_PATH . '/classes');
+        }
+
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Pgsql($this->config, DAL_PATH . '/classes', 'pgsql', $this->dbname);
+        $generator = new \Dal\Model\Generator\Pgsql(DAL_PATH . '/classes', 'pgsql', $this->dbname);
         $generator->run();
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Test.php'));
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Table/TestPrototype.php'));
@@ -60,14 +72,14 @@ class PgsqlModelTest extends TestCase {
 
         $test = null;
 
-        $test = Test::get($id);
+        $test = \Space\Test::get($id);
 
         $this->assertAttributeEquals(md5('hash2'), 'hash', $test);
 
         // Delete
 
         $test->remove();
-        $test = Test::get($id);
+        $test = \Space\Test::get($id);
 
         $this->assertNull($test);
     }

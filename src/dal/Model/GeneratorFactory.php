@@ -12,16 +12,20 @@ class GeneratorFactory
 
     /**
      * Create model generator
-     * @param \stdClass $config Configuration profile
+     * @param string $targetDir Target directory
+     * @param string $profile Database profile
+     * @param string $dbname Override database name
      * @return mixed
+     * @throws \Dal\Exception
      */
-    static function createGenerator($config, $rootPath, $profile, $dbname = null) {
+    static function createGenerator($targetDir, $profile = 'default', $dbname = null) {
+        $config = \Dal\Dal::getConfiguration();
         if (empty($config->$profile)) {
             throw new Exception('Profile not found');
         }
         $className = ucfirst($config->$profile->driver);
         $className = "\\Dal\\Model\\Generator\\$className";
-        return new $className($config, $rootPath, $profile, $dbname);
+        return new $className($targetDir, $profile, $dbname);
     }
 
 }

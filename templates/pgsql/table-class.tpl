@@ -14,6 +14,7 @@ class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
     static $columns;
     static $table = '<?=$tableName?>';
     static $pk = [<?=implode(', ', $pk)?>];
+    static $profile = '<?=$profile?>';
 <?php if($generated): ?>
     static $generated = [
 <?php foreach($generated as $column=>$generator): ?>

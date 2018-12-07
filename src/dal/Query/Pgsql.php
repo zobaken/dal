@@ -359,11 +359,11 @@ class Pgsql extends Basic {
      * Insert a row of data
      * @param string $table
      * @param array $row
+     * @return Pgsql
      */
     public function insertRow($table, $row) {
-        $this->insertInto($table)
-            ->query('(#?) VALUES (?)', array_keys($row), array_values($row))
-            ->exec();
+        return $this->insertInto($table)
+            ->query('(#?) VALUES (?)', array_keys($row), array_values($row));
     }
 
 }

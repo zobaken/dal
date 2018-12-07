@@ -1,6 +1,7 @@
 <?php
 
 namespace Dal\Model\Generator;
+use Symfony\Component\Inflector\Inflector;
 
 /**
  * Parent of model generators
@@ -8,15 +9,14 @@ namespace Dal\Model\Generator;
 class Basic
 {
 
-    var $profile;
     var $config;
-    var $rootPath;
+    var $targetDir;
+    var $profile;
     var $dbname;
 
-    function __construct($config, $rootPath, $profile = 'default', $dbname = null) {
-        \Dal\Dal::setConfiguration($config);
-        $this->config = $config->{$profile};
-        $this->rootPath = $rootPath;
+    function __construct($targetDir, $profile = 'default', $dbname = null) {
+        $this->config = \Dal\Dal::getConfiguration()->$profile;
+        $this->targetDir = $targetDir;
         $this->profile = $profile;
         $this->dbname = $dbname;
     }
@@ -30,10 +30,8 @@ class Basic
     }
 
     function getClassName($tableName) {
-        if (strlen($tableName) > 1 && $tableName[strlen($tableName) - 1] == 's') {
-            $tableName = substr($tableName, 0, strlen($tableName) - 1);
-        }
         $parts = explode('_', $tableName);
+        $parts[count($parts) - 1] = Inflector::singularize($parts[count($parts) - 1]);
         foreach($parts as $key => $value){
             $parts[$key] = ucfirst($value);
         }

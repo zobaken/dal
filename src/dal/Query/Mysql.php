@@ -80,7 +80,7 @@ class Mysql extends Basic {
             $names = array_map(array($this, 'quoteName'), (array)$name);
             return implode(', ', $names);
         }
-        return '`' . $name . '`';
+        return '`' . preg_replace('/[^A-Za-z0-9\\_]/', '',$name) . '`';
     }
 
     /**
@@ -324,14 +324,14 @@ class Mysql extends Basic {
     }
 
     /**
-     * Insert a row of data
+     * Get insert row quewry
      * @param string $table
      * @param array $row
+     * @return Mysql
      */
     public function insertRow($table, $row) {
-        $this->insertInto($table)
-            ->query('(#?) VALUES (?)', array_keys($row), array_values($row))
-            ->exec();
+        return $this->insertInto($table)
+            ->query('(#?) VALUES (?)', array_keys($row), array_values($row));
     }
 
 }

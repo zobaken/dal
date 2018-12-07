@@ -3,6 +3,7 @@
     "host": "192.168.99.100",
     "user": "test",
     "password": "test",
+    "dbname": "test",
     "driver": "mysql"
   },
   "pgsql": {

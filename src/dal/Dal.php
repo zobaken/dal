@@ -49,6 +49,36 @@ class Dal
     }
 
     /**
+     * Returns current configuration object
+     * @return object
+     */
+    public static function getConfiguration() {
+        return static::$configuration;
+    }
+
+    /**
+     * Load database configuration from file. In case of PHP config
+     * return statement should be used.
+     * @param string $filename Can be php file (should return object or array) or JSON
+     * @throws Exception
+     */
+    public static function loadConfiguration($filename) {
+        if (pathinfo($filename, PATHINFO_EXTENSION ) == 'json') {
+            // Reading json config
+            $config = json_decode(file_get_contents($filename));
+        } elseif (pathinfo($filename, PATHINFO_EXTENSION ) == 'php') {
+            // Reading php config
+            $config = require $filename;
+        } elseif (pathinfo($filename, PATHINFO_EXTENSION ) == 'ini') {
+            $config = parse_ini_file($filename);
+        }
+        if (empty($config)) {
+            throw new \Dal\Exception('Error loading config file');
+        }
+        static::setConfiguration($config);
+    }
+
+    /**
      * Set default profile for using with getQuery method
      * @param $profile Profile name
      */

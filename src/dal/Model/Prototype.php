@@ -13,7 +13,10 @@ class Prototype {
     /** @var array Primary key */
     static $pk;
 
-    /** @var  array sequence fields */
+    /** @var string Configuration profile */
+    static $profile;
+
+    /** @var  array Sequence fields */
     static $sequences;
 
     /** @var  array Generated fields */
@@ -57,7 +60,7 @@ class Prototype {
      */
     function remove() {
         static::delete($this->getId());
-        return (bool)db()->affectedRows();
+        return (bool)\Dal\Dal::getQuery(static::$profile)->affectedRows();
     }
 
     /**
@@ -191,7 +194,7 @@ class Prototype {
      */
     static function querySelect($what = '*') {
         $table = static::$table;
-        return db()
+        return \Dal\Dal::getQuery(static::$profile)
             ->setClass(get_called_class())
             ->select($what)
             ->from($table);
@@ -203,7 +206,7 @@ class Prototype {
      * @throws \Dal\Exception
      */
     static function queryDelete() {
-        return db()->deleteFrom(static::$table);
+        return \Dal\Dal::getQuery(static::$profile)->deleteFrom(static::$table);
     }
 
     /**
@@ -212,7 +215,7 @@ class Prototype {
      * @throws \Dal\Exception
      */
     static function queryUpdate() {
-        return  db()->update(static::$table);
+        return  \Dal\Dal::getQuery(static::$profile)->update(static::$table);
     }
 
     /**
@@ -221,7 +224,7 @@ class Prototype {
      * @throws \Dal\Exception
      */
     static function queryReplace() {
-        return db()->replace(static::$table);
+        return \Dal\Dal::getQuery(static::$profile)->replace(static::$table);
     }
 
     /**
@@ -230,7 +233,7 @@ class Prototype {
      * @throws \Dal\Exception
      */
     static function queryInsert() {
-        return  db()->insertInto(static::$table);
+        return  \Dal\Dal::getQuery(static::$profile)->insertInto(static::$table);
     }
 
     /**
@@ -240,7 +243,7 @@ class Prototype {
      * @throws \Dal\Exception
      */
     static function queryUpdateRow($fields) {
-        $db = db()->update(static::$table);
+        $db = \Dal\Dal::getQuery(static::$profile)->update(static::$table);
         $q = [];
         foreach($fields as $k=>$v) {
             $q []= $db->quoteName($k) . '=' . $db->quote($v);
@@ -255,7 +258,7 @@ class Prototype {
      * @throws \Dal\Exception
      */
     static function queryReplaceRow($fields) {
-        $db = db()->replace(static::$table);
+        $db = \Dal\Dal::getQuery(static::$profile)->replace(static::$table);
         $q = [];
         foreach($fields as $k=>$v) {
             $q []= $db->quoteName($k) . '=' . $db->quote($v);
@@ -277,7 +280,7 @@ class Prototype {
                 }
             }
         }
-        $db = db()->insertInto(static::$table);
+        $db = \Dal\Dal::getQuery(static::$profile)->insertInto(static::$table);
         return $db->query('(#?) VALUES (?)', array_keys($fields), array_values($fields));
     }
 
