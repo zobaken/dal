@@ -127,7 +127,7 @@ printf("Updated %d row(s)\n", db()->affectedRows());
 
 Method `insertRow()` is a shortcut for insert request.
 `dbtime()` function without parameters returns current time in format `Y-m-d H:i:s`.
-Passing `true` to `exec()` method we as k it to return last inserted id.
+Passing `true` to `exec()` method we ask it to return last inserted id.
 Method `affectedRows()` is used to get number of rows affected by previous query, obviously.
 
 # Models
@@ -138,7 +138,7 @@ To generate models we need already initialized database with existing data struc
 In this example we use provided script utilizing configuration file from examples above:
 
 ```php
-php vendor/bin/dbgen config.php model
+vendor/bin/dbgen config.php model
 ```
 
 Model classes will be created in "model" folder. If you need to create your own
