@@ -6,7 +6,7 @@
   "license": "MIT",
   "require": {
     "php": ">=7.0",
-    "zobaken/inflector": "dev-master"
+    "zobaken/inflector": "4.2.1-php7"
   },
   "autoload": {
     "files": [
