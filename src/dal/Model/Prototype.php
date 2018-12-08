@@ -187,6 +187,15 @@ class Prototype {
     }
 
     /**
+     * Get query for our object
+     * @return \Dal\Query\Basic
+     * @throws \Dal\Exception
+     */
+    function query() {
+        return \Dal\Dal::getQuery(static::$profile);
+    }
+
+    /**
      * Return \Dal\Query\Basic select query
      * @param string $what Columns to select
      * @return \Dal\Query\Basic
