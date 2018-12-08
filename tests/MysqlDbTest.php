@@ -24,10 +24,8 @@ class MysqlDbTest extends TestCase {
         }
         $this->assertTrue(db()->createDatabase($this->dbname)->exec());
         $this->assertTrue(db()->q('USE #?', $this->dbname)->exec());
-    }
 
-    function testCreateTable() {
-        $this->assertTrue($this->createTestTable());
+        $this->createTestTable();
     }
 
     function testInsertSelect() {

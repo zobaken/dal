@@ -9,7 +9,7 @@ namespace <?=$namespace?>\Table;
 namespace Table;
 <?php endif; ?>
 
-class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
+class <?=$tableClassName?> extends \Dal\Model\Prototype {
 
     static $columns;
     static $table = '<?=$tableName?>';
@@ -49,7 +49,8 @@ class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
     /**
     * Get object by id
     * @param mixed $id Id
-    * @return \<?=$namespace?>\<?=$className?>
+    * @return <?=$namespace ? '\\$namespace\\' : ''?><?=$className?>
+
     */
     static function get($id) {
         return forward_static_call_array(['\Dal\Model\Prototype', 'get'], func_get_args());
@@ -58,7 +59,7 @@ class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
     /**
     * Get all objects
     * @param string $order Order expression
-    * @return \<?=$namespace?>\<?=$className?>
+    * @return <?=$namespace ? '\\$namespace\\' : ''?><?=$className?>[]
     */
     static function getAll($order = null) {
         return forward_static_call_array(['\Dal\Model\Prototype', 'getAll'], func_get_args());
@@ -67,7 +68,8 @@ class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
     /**
     * Find object
     * @param string $where Where statement
-    * @return \<?=$namespace?>\<?=$className?>
+    * @return <?=$namespace ? '\\$namespace\\' : ''?><?=$className?>
+
     */
     static function findRow($where) {
         return forward_static_call_array(['\Dal\Model\Prototype', 'findRow'], func_get_args());
@@ -76,7 +78,7 @@ class <?=$tableClassName?>Prototype extends \Dal\Model\Prototype {
     /**
     * Find objects
     * @param string $where Where statement
-    * @return \<?=$namespace?>\<?=$className?>[]
+    * @return <?=$namespace ? '\\$namespace\\' : ''?><?=$className?>[]
     */
     static function find($where) {
         return forward_static_call_array(['\Dal\Model\Prototype', 'find'], func_get_args());

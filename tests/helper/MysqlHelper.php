@@ -24,7 +24,7 @@ trait MysqlHelper
      */
     function createTestTable() {
         db()->q('USE #?', $this->dbname)->exec();
-        return db()->query(
+        db()->query(
             <<<SQL
 
 CREATE TABLE test (
@@ -32,6 +32,39 @@ CREATE TABLE test (
   name varchar(128) NOT NULL,
   created_ts DATETIME NOT NULL,
   hash varchar(128),
+  PRIMARY KEY(id)
+)
+
+SQL
+        )->exec();
+
+        db()->query(
+            <<<SQL
+
+CREATE TABLE exchanges (
+  id INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY(id)
+)
+
+SQL
+        )->exec();
+
+        db()->query(
+            <<<SQL
+
+CREATE TABLE d2s_i2s (
+  id INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY(id)
+)
+
+SQL
+        )->exec();
+
+        db()->query(
+            <<<SQL
+
+CREATE TABLE change_names (
+  id INT NOT NULL AUTO_INCREMENT,
   PRIMARY KEY(id)
 )
 

@@ -7,6 +7,6 @@
 namespace <?=$namespace?>;
 <?php endif; ?>
 
-class <?=$className?> extends Table\<?=$tableClassName?>Prototype {
+class <?=$className?> extends Table\<?=$tableClassName?> {
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "zobaken/daltron",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "PHP database abstraction layer",
   "type": "library",
   "license": "MIT",

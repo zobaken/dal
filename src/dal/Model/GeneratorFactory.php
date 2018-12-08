@@ -18,14 +18,14 @@ class GeneratorFactory
      * @return mixed
      * @throws \Dal\Exception
      */
-    static function createGenerator($targetDir, $profile = 'default', $dbname = null) {
+    static function createGenerator($targetDir, $profile = 'default') {
         $config = \Dal\Dal::getConfiguration();
         if (empty($config->$profile)) {
             throw new Exception('Profile not found');
         }
         $className = ucfirst($config->$profile->driver);
         $className = "\\Dal\\Model\\Generator\\$className";
-        return new $className($targetDir, $profile, $dbname);
+        return new $className($targetDir, $profile);
     }
 
 }
