@@ -14,8 +14,7 @@ class Mysql extends Basic {
      */
     function run() {
 
-        $dbname = $this->dbname ?: $this->config->dbname;
-        $tables = db($this->profile)->query("SHOW TABLES FROM #?", $dbname)->fetchAllArray();
+        $tables = db($this->profile)->query("SHOW TABLES FROM #?", $this->config->dbname)->fetchAllArray();
 
         foreach($tables as $tc){
             $tableName = $tc[0];
@@ -48,7 +47,7 @@ class Mysql extends Basic {
             ob_start();
             require DAL_PATH . '/templates/mysql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->targetDir . "$namespacePath/Table/{$tableClassName}Prototype.php";
+            $tableClassPath = $this->targetDir . "$namespacePath/Table/{$tableClassName}.php";
             $classPath = $this->targetDir . "$namespacePath/$className.php";
             if (!is_dir(dirname($tableClassPath))) {
                 mkdir(dirname($tableClassPath), 0755, true);

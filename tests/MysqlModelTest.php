@@ -27,7 +27,7 @@ class MysqlModelTest extends TestCase {
         }
         $this->createDatabase();
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default', $this->dbname);
+        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default');
         $generator->run();
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Test.php'));
         $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/TestPrototype.php'));
@@ -76,6 +76,32 @@ class MysqlModelTest extends TestCase {
         $test = Test::get($id);
 
         $this->assertNull($test);
+    }
+
+    function testGenerqatorOptions() {
+        // Test create classes
+        if (is_dir(DAL_PATH . '/classes')) {
+            $this->removeDirectory(DAL_PATH . '/classes');
+        }
+        $this->createDatabase();
+        $this->createTestTable();
+        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default', true);
+
+        $generator->setClassMap([
+            'change_names' => 'SuperClass',
+        ]);
+
+        $generator->run();
+
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Exchange.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/ExchangePrototype.php'));
+
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/D2sI2s.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/D2sI2sPrototype.php'));
+
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/SuperClass.php'));
+        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/SuperClassPrototype.php'));
+
     }
 
 }
