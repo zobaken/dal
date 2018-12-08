@@ -13,7 +13,7 @@ PHP7, mysqli extension for Mysql support. pgsql extension for postgres..
 Install it via composer:
 
 ```
-composer require zobaken/daltron dev-master
+composer require zobaken/daltron
 ```
 
 # Configuration
@@ -191,13 +191,13 @@ $test->remove();
 
 ## Advanced model requests
 
-We can get object by passing select condition to `findRow()` method:
+We can get object by passing where condition to `findRow()` method:
 
 ```php
 $test = Tesrt::findRow('name = ?', 'new name');
 ```
 
-Same for list of object usingf `find()` method:
+Same for list of object using `find()` method:
 
 ```php
 $objects = Tesrt::find('created_ts < ?', dbtime('- 1 day'));
