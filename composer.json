@@ -1,12 +1,12 @@
 {
   "name": "zobaken/daltron",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "PHP database abstraction layer",
   "type": "library",
   "license": "MIT",
   "require": {
     "php": ">=7.0",
-    "zobaken/inflector": "4.2.1-php7"
+    "zobaken/inflector": "4.2.2"
   },
   "autoload": {
     "files": [
