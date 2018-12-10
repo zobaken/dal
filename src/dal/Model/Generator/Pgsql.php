@@ -16,6 +16,8 @@ class Pgsql extends Basic
     function run()
     {
 
+        $this->getExistingClassFiles();
+
         $tables = db($this->profile)->query("SELECT table_schema,table_name
             FROM information_schema.tables
             WHERE table_schema = ?
@@ -74,23 +76,28 @@ class Pgsql extends Basic
 
             if (isset($this->config->namespace)) {
                 $namespace = $this->config->namespace;
-                $namespacePath = $this->namespaceToPath($namespace);
+                $namespacePath = $this->getNamespacePath($namespace);
             } else {
-                $namespace = null;
+                $namespace = '';
                 $namespacePath = '';
             }
 
             $profile = $this->profile;
+            if ($namespace) {
+                $tableNamespace = "{$namespace}\\Table\\{$tableClassName}";
+            } else {
+                $tableNamespace = "Table\\{$tableClassName}";
+            }
             ob_start();
             require DAL_PATH . '/templates/pgsql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->targetDir . "$namespacePath/Table/{$tableClassName}.php";
+            $tableClassPath = "{$this->targetDir}{$namespacePath}/Table/{$tableClassName}.php";
             $classPath = $this->targetDir . "$namespacePath/$className.php";
             if (!is_dir(dirname($tableClassPath))) {
                 mkdir(dirname($tableClassPath), 0755, true);
             }
             file_put_contents($tableClassPath, $tableClassContent);
-            if (!file_exists($classPath)) {
+            if (!file_exists($classPath) && !isset($this->existingModelFiles[$tableNamespace])) {
                 ob_start();
                 require DAL_PATH . '/templates/pgsql/class.tpl';
                 $classContent = sprintf("<?php \n\n%s", ob_get_clean());

@@ -14,6 +14,7 @@ class Basic
     var $profile;
     var $classmap = [];
     var $singularize = false;
+    var $existingModelFiles;
 
     function __construct($targetDir, $profile = 'default', $singularize = false) {
         $this->config = \Dal\Dal::getConfiguration()->$profile;
@@ -23,7 +24,11 @@ class Basic
     }
 
     function getTableClassName($tableName) {
-        return $this->getClassName($tableName) . 'Prototype';
+        $parts = explode('_', $tableName);
+        foreach($parts as $key => $value){
+            $parts[$key] = ucfirst($value);
+        }
+        return join('', $parts) . 'Prototype';
     }
 
     function getClassName($tableName) {
@@ -44,13 +49,28 @@ class Basic
         return join('', $parts);
     }
 
-    function namespaceToPath($namespace) {
+    function getNamespacePath($namespace) {
         $path = explode('\\', $namespace);
         return '/' . implode('/', $path);
     }
 
     function setClassMap($classMap) {
         $this->classmap = $classMap;
+    }
+
+    function getExistingClassFiles() {
+        if (!file_exists($this->targetDir)) {
+            return [];
+        }
+        $result = [];
+        $files = glob($this->targetDir . '/*.php');
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            if (preg_match('/extends ([\\w\\\\]+)/', $content, $m)) {
+                $result[$m[1]] = $file;
+            }
+        }
+        $this->existingModelFiles =  $result;
     }
 
 }
