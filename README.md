@@ -56,7 +56,7 @@ Then we load it like this:
 Simplest query will look like:
 
 ```php
-$rows = db()->query('SELECT * FROM test')->fetchAllAssoc();
+$rows = db()->query('SELECT * FROM users')->fetchAllAssoc();
 ```
 
 Lets try something more complex. Builder mimics SQL syntax, so nothing new to learn:
@@ -64,7 +64,7 @@ Lets try something more complex. Builder mimics SQL syntax, so nothing new to le
 ```php
 $rows = db()
     ->select('*')
-    ->from('test')
+    ->from('users')
     ->where('created_ts = ?', $time)
     ->fetchAllAssoc();
 ```
@@ -76,7 +76,7 @@ are escaped and surrounded by quotes.
 The previous example is equivalent to:
 
 ```php
-$query = sprintf("SELECT * FROM test WHERE created_ts < '%s'",
+$query = sprintf("SELECT * FROM users WHERE created_ts < '%s'",
     mysqli_real_escape_string($connection, $time)
 );
 $result = mysqli_query($connection, $query);
@@ -87,7 +87,7 @@ Here is a typical situation when query conditions depends on user input:
 
 ```php
 $rows = db()->select('*')
-    ->from('test')
+    ->from('users')
     ->where('true')
     ->ifQuery($timeFrom, 'AND created_ts >= ?', $timeFrom)
     ->ifQuery($timeTo, 'AND created_ts < ?', $timeTo)
@@ -107,16 +107,16 @@ Insert and update example (we assume that id field is autoincrement):
 ```php
 // Insert query
 $row = [
-    'name' => 'test1',
+    'name' => 'Peter Userman',
     'created_ts' => dbtime(),
-    'hash' => password_hash('password', PASSWORD_DEFAULT),
+    'hash' => password_hash('REMEMBERME1', PASSWORD_DEFAULT),
 ];
 
-$id = db()->insertRow('test', $row)
+$id = db()->insertRow('users', $row)
     ->exec(true);
 
 // Update query
-db()->update('test')
+db()->update('users')
     ->set('hash = ?', '')
     ->where('id = ?', $id)
     ->exec();
@@ -162,11 +162,11 @@ Here is a an example of using model classes:
 
 ```php
 // Create new object
-$test = new Test();
-$test->name = 'test name';
-$test->created_ts = dbtime();
-$test->hash = md5('hash');
-$test->id = $test->insert(true);
+$user = new User();
+$user->name = 'Mike Swoloch';
+$user->created_ts = dbtime();
+$user->hash = md5('hash');
+$user->id = $user->insert(true);
 ```
 
 Passing `true` to `insert` we ask it to return last inserted id.
@@ -175,11 +175,11 @@ Next we will get object from database and update it:
 
 ```php
 // Get object from database
-$test = Test::get($id);
-if ($test) {
+$user = User::get($id);
+if ($user) {
     // Update object
-    $test->name = 'new name';
-    $test->update();
+    $user->name = 'Mike Sweety';
+    $user->update();
 }
 ```
 
@@ -189,7 +189,7 @@ Use `remove` to delete the object:
 
 ```php
 // Delete object
-$test->remove();
+$user->remove();
 ```
 
 ## Advanced model requests
@@ -197,13 +197,13 @@ $test->remove();
 We can get object by passing where condition to `findRow` method:
 
 ```php
-$test = Tesrt::findRow('name = ?', 'new name');
+$user = User::findRow('name = ?', 'Alexandr Flea');
 ```
 
 Same for list of object using `find` method:
 
 ```php
-$objects = Tesrt::find('created_ts < ?', dbtime('- 1 day'));
+$objects = User::find('created_ts < ?', dbtime('- 1 day'));
 ```
 
 This will return objects created earlier then day ago.
@@ -212,15 +212,15 @@ You can pass not only where condition, but some later part of request.
 It is possible to limit our request to return only 10 rows:
 
 ```php
-$objects = Tesrt::find('created_ts < ? LIMIT ?', dbtime('- 1 day'), 10);
+$objects = User::find('created_ts < ? LIMIT ?', dbtime('- 1 day'), 10);
 ```
 
 Also we can use regular query builder syntax. Here is slightly modified
 request from example we had in somewhere above. Query will return an
-array of `Test` objects.
+array of `User` objects.
 
 ```php
-$rows = Test::querySelect()
+$rows = User::querySelect()
     ->where('true')
     ->ifQuery($timeFrom, 'AND created_ts >= ?', $timeFrom)
     ->ifQuery($timeTo, 'AND created_ts < ?', $timeTo)
@@ -233,8 +233,8 @@ $rows = Test::querySelect()
 Here is example of update request:
 
 ```php
-Test::queryUpdate()
-    ->set('hash = ?', '')
+User::queryUpdate()
+    ->set('hash = ?', '[some old man]')
     ->where('created_ts < ?', dbtime('- 1 month'))
     ->exec();
 ```
@@ -242,20 +242,20 @@ Test::queryUpdate()
 Same for delete:
 
 ```php
-Test::queryDelete()
+User::queryDelete()
     ->where('created_ts < ?', dbtime('- 1 year'))
     ->exec();
 
 // Lets inform user
-printf("Deleted %d row(s)\n", Test::query()->affectedRows());
+printf("Deleted %d row(s)\n", User::query()->affectedRows());
 ```
 
 Its easier to use `queryUpdateRow` method to update several fields:
 
 ```php
-Test::queryUpdateRow([
-        'name' => 'parasit',
-        'hash' => mdr('parasit_pass1'),
+User::queryUpdateRow([
+        'name' => '[some old man]',
+        'hash' => md5('password'),
     ])
     ->where('created_ts < ?', dbtime('- 1 month'))
     ->exec();
@@ -277,7 +277,7 @@ return [
     'password' => 'test',
     'dbname' => 'test',
     'driver' => 'mysql',
-    'namespace' => 'TestNamespace',
+    'namespace' => 'UserNamespace',
 ];
 ```
 
@@ -312,11 +312,11 @@ Now we have exactly same "default" profile as we had before and another one name
 Now we can use it by passing to our `db` function: 
 
 ```php
-db('postgres')->q('SELECT 1')->fetchCell();
+$rows = db('postgres')->q('SELECT * FROM users')->fetchAll();
 ```
 
-Or we can pass it to model generator, so the models will use this profile insted of
-"default:"
+Also we can pass profile to model generator, so the models will use it instead of
+"default":
 
 ```php
 $generator = \Dal\Model\GeneratorFactory::createGenerator('model', 'postgres');
