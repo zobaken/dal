@@ -227,7 +227,7 @@ $rows = User::querySelect()
     ->ifQuery($order && $orderDirection, 'ORDER BY #? !?', $order, $orderDirection)
     ->ifQuery($limit, 'LIMIT ?', $limit)
     ->ifQuery($offset, 'OFFSET ?', $offset)
-    ->fetchAllAssoc();
+    ->fetchAll();
 ```
 
 Here is example of update request:
