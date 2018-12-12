@@ -22,19 +22,19 @@ class MysqlModelTest extends TestCase {
     function testGeneration() {
 
         // Test create classes
-        if (is_dir(DAL_PATH . '/classes')) {
-            $this->removeDirectory(DAL_PATH . '/classes');
+        if (is_dir(__DIR__ . '/classes')) {
+            $this->removeDirectory(__DIR__ . '/classes');
         }
         $this->createDatabase();
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default');
+        $generator = new \Dal\Model\Generator\Mysql(__DIR__ . '/classes', 'default');
         $generator->run();
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Test.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/TestPrototype.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Test.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Table/TestPrototype.php'));
 
         // Test functionality
 
-        require_once DAL_PATH . '/classes/Test.php';
+        require_once __DIR__ . '/classes/Test.php';
 
         $this->assertTrue(class_exists('Test'));
 
@@ -80,12 +80,12 @@ class MysqlModelTest extends TestCase {
 
     function testGeneratorOptions() {
         // Test create classes
-        if (is_dir(DAL_PATH . '/classes')) {
-            $this->removeDirectory(DAL_PATH . '/classes');
+        if (is_dir(__DIR__ . '/classes')) {
+            $this->removeDirectory(__DIR__ . '/classes');
         }
         $this->createDatabase();
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default', true);
+        $generator = new \Dal\Model\Generator\Mysql(__DIR__ . '/classes', 'default', true);
 
         $generator->setClassMap([
             'change_names' => 'SuperClass',
@@ -93,22 +93,22 @@ class MysqlModelTest extends TestCase {
 
         $generator->run();
 
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Exchange.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/ExchangesPrototype.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Exchange.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Table/ExchangesPrototype.php'));
 
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/D2sI2s.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/D2sI2sPrototype.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/D2sI2s.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Table/D2sI2sPrototype.php'));
 
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/SuperClass.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Table/ChangeNamesPrototype.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/SuperClass.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Table/ChangeNamesPrototype.php'));
 
     }
 
     function testModelExists() {
-        rename(DAL_PATH . '/classes/Exchange.php', DAL_PATH . '/classes/ExTest.php');
-        $generator = new \Dal\Model\Generator\Mysql(DAL_PATH . '/classes', 'default', true);
+        rename(__DIR__ . '/classes/Exchange.php', __DIR__ . '/classes/ExTest.php');
+        $generator = new \Dal\Model\Generator\Mysql(__DIR__ . '/classes', 'default', true);
         $generator->run();
-        $this->assertFalse(file_exists(DAL_PATH . '/classes/Exchange.php'));
+        $this->assertFalse(file_exists(__DIR__ . '/classes/Exchange.php'));
     }
 
 }

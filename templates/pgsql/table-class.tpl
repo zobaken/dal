@@ -3,11 +3,7 @@
  * Generated automatically. All changes will be lost.
 */
 
-<?php if($namespace): ?>
-namespace <?=$namespace?>\Table;
-<?php else: ?>
-namespace Table;
-<?php endif; ?>
+namespace <?=$tableNamespace?>;
 
 class <?=$tableClassName?> extends \Dal\Model\Prototype {
 
