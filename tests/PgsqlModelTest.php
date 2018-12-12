@@ -19,7 +19,7 @@ class PgsqlModelTest extends TestCase {
         Dal\Dal::setConfiguration($this->config);
         spl_autoload_register(function ($class) {
             $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-            $path = DAL_PATH . '/classes/' . $class . '.php';
+            $path = __DIR__ . '/classes/' . $class . '.php';
             if (file_exists($path)) {
                 require_once $path;
             }
@@ -28,19 +28,19 @@ class PgsqlModelTest extends TestCase {
 
     function testGeneration() {
 
-        if (is_dir(DAL_PATH . '/classes')) {
-            $this->removeDirectory(DAL_PATH . '/classes');
+        if (is_dir(__DIR__ . '/classes')) {
+            $this->removeDirectory(__DIR__ . '/classes');
         }
 
         $this->createTestTable();
-        $generator = new \Dal\Model\Generator\Pgsql(DAL_PATH . '/classes', 'pgsql', $this->dbname);
+        $generator = new \Dal\Model\Generator\Pgsql(__DIR__ . '/classes', 'pgsql', $this->dbname);
         $generator->run();
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Test.php'));
-        $this->assertTrue(file_exists(DAL_PATH . '/classes/Space/Table/TestPrototype.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Space/Test.php'));
+        $this->assertTrue(file_exists(__DIR__ . '/classes/Space/Table/TestPrototype.php'));
 
         // Test functionality
 
-        require_once DAL_PATH . '/classes/Space/Test.php';
+        require_once __DIR__ . '/classes/Space/Test.php';
 
         $this->assertTrue(class_exists('\Space\Test'));
 

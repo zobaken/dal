@@ -14,43 +14,45 @@ class Basic
     var $profile;
     var $classmap = [];
     var $singularize = false;
+    var $existingModelFiles;
 
-    function __construct($targetDir, $profile = 'default', $singularize = false) {
+    /**
+     * Basic constructor.
+     * @param string $targetDir Where to place files
+     * @param string $profile Configuration profile
+     * @param bool $singularCLassNames Use singular class names
+     */
+    function __construct(string $targetDir, $profile = 'default', $singularCLassNames = false) {
         $this->config = \Dal\Dal::getConfiguration()->$profile;
         $this->targetDir = $targetDir;
         $this->profile = $profile;
-        $this->singularize = $singularize;
+        $this->singularize = $singularCLassNames;
     }
 
-    function getTableClassName($tableName) {
-        return $this->getClassName($tableName) . 'Prototype';
-    }
-
-    function getClassName($tableName) {
-        if (isset($this->classmap[$tableName])) {
-            return $this->classmap[$tableName];
-        }
-        $parts = explode('_', $tableName);
-        if ($this->singularize && !preg_match('/\\d/', $parts[count($parts) - 1])) {
-            $single = Inflector::singularize($parts[count($parts) - 1]);
-            if (is_array($single)) {
-                $single = $single[count($single) - 1];
-            }
-            $parts[count($parts) - 1] = $single;
-        }
-        foreach($parts as $key => $value){
-            $parts[$key] = ucfirst($value);
-        }
-        return join('', $parts);
-    }
-
-    function namespaceToPath($namespace) {
-        $path = explode('\\', $namespace);
-        return '/' . implode('/', $path);
-    }
-
-    function setClassMap($classMap) {
+    /**
+     * @param array $classMap Set custom class names for specified tables [ tableName => className ]
+     */
+    function setClassMap(array $classMap) {
         $this->classmap = $classMap;
+    }
+
+    /**
+     * Search for existing models in target directory
+     * @return array
+     */
+    function searchExistingClassFiles() {
+        if (!file_exists($this->targetDir)) {
+            return [];
+        }
+        $result = [];
+        $files = glob($this->targetDir . '/*.php');
+        foreach ($files as $file) {
+            $content = file_get_contents($file);
+            if (preg_match('/extends ([\\w\\\\]+)/', $content, $m)) {
+                $result[$m[1]] = $file;
+            }
+        }
+        $this->existingModelFiles =  $result;
     }
 
 }

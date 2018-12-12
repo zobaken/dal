@@ -69,7 +69,7 @@ $rows = db()
     ->fetchAllAssoc();
 ```
 
-Every "unknown" method of query, like `select()` in this example adds term to
+Every "unknown" method of query, like `select` method in this example adds term to
 the SQL request. All parameters mapped with `?` placeholders, that are not integer, 
 are escaped and surrounded by quotes.
 
@@ -97,7 +97,7 @@ $rows = db()->select('*')
     ->fetchAllAssoc();
 ```
 
-Additional conditions are added only when the first parameter of `ifQuery()` is
+Additional conditions are added only when the first parameter of `ifQuery` is
 true. `#?` placeholder is used for field name escaping. In this example we assume
 that `$orderDirection` equals `ASC` or `DESC` and `!?` placeholder does not escape the value,
 use it with caution!
@@ -125,10 +125,10 @@ db()->update('test')
 printf("Updated %d row(s)\n", db()->affectedRows());
 ```
 
-Method `insertRow()` is a shortcut for insert request.
-`dbtime()` function without parameters returns current time in format `Y-m-d H:i:s`.
-Passing `true` to `exec()` method we ask it to return last inserted id.
-Method `affectedRows()` is used to get number of rows affected by previous query, obviously.
+Method `insertRow` is a shortcut for insert request.
+`dbtime` function without parameters returns current time in format `Y-m-d H:i:s`.
+Passing `true` to `exec` method we ask it to return last inserted id.
+Method `affectedRows` is used to get number of rows affected by previous query, obviously.
 
 # Models
 
@@ -152,7 +152,7 @@ $generator->run();
 
 ## Basic usage
 
-Its your responsibility to load model classes using `spl_autoload_register()` function or whatever method
+Its your responsibility to load model classes using `spl_autoload_register` function or whatever method
 you like.
 
 Here is a an example of using model classes:
@@ -166,7 +166,7 @@ $test->hash = md5('hash');
 $test->id = $test->insert(true);
 ```
 
-Passing `true` to `insert()` we ask it to return last inserted id.
+Passing `true` to `insert` we ask it to return last inserted id.
 
 Next we will get object from database and update it:
 
@@ -182,7 +182,7 @@ if ($test) {
 
 Simple as it!
 
-Use `remove()` to delete the object:
+Use `remove` to delete the object:
 
 ```php
 // Delete object
@@ -191,13 +191,13 @@ $test->remove();
 
 ## Advanced model requests
 
-We can get object by passing where condition to `findRow()` method:
+We can get object by passing where condition to `findRow` method:
 
 ```php
 $test = Tesrt::findRow('name = ?', 'new name');
 ```
 
-Same for list of object using `find()` method:
+Same for list of object using `find` method:
 
 ```php
 $objects = Tesrt::find('created_ts < ?', dbtime('- 1 day'));
@@ -247,13 +247,77 @@ Test::queryDelete()
 printf("Deleted %d row(s)\n", Test::query()->affectedRows());
 ```
 
+Its easier to use `queryUpdateRow` method to update several fields:
+
+```php
+Test::queryUpdateRow([
+        'name' => 'parasit',
+        'hash' => mdr('parasit_pass1'),
+    ])
+    ->where('created_ts < ?', dbtime('- 1 month'))
+    ->exec();
+```
+
+In this case "SET" statement will be generated for passed fields with values escaped.
+
 ## Namespaces
 
-TODO
+By default model classes are created in root namespace. You can change it by
+adding `"namespace"` option to your config:
 
-# Profiles
+```php
+<?php
 
-TODO
+return [
+    'host' => '192.168.99.100',
+    'user' => 'test',
+    'password' => 'test',
+    'dbname' => 'test',
+    'driver' => 'mysql',
+    'namespace' => 'TestNamespace',
+];
+```
+
+# Configuration profiles
+
+You can create more then one profile to access different databases. In examples
+above we used only one profile with name "default". To create more profiles you need
+to define them in configuration like this:
+
+```php
+<?php
+
+return [
+    'default' => [
+        'host' => '192.168.99.100',
+        'user' => 'test',
+        'password' => 'test',
+        'dbname' => 'test',
+        'driver' => 'mysql',
+    ],
+    'postgres' => [
+        'host' => '192.168.99.100',
+        'user' => 'test',
+        'password' => 'test',
+        'dbname' => 'test',
+        'driver' => 'pgsql',
+    ],
+];
+```
+
+Now we have exactly same "default" profile as we had before and another one named "postgres".
+Now we can use it by passing to our `db` function: 
+
+```php
+db('postgres')->q('SELECT 1')->fetchCell();
+```
+
+Or we can pass it to model generator, so the models will use this profile insted of
+"default:"
+
+```php
+$generator = \Dal\Model\GeneratorFactory::createGenerator('model', 'postgres');
+```
 
 # License
 

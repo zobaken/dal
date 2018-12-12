@@ -15,16 +15,18 @@ class Mysql extends Basic {
     function run() {
 
         $tables = db($this->profile)->query("SHOW TABLES FROM #?", $this->config->dbname)->fetchAllArray();
+        $this->searchExistingClassFiles();
 
         foreach($tables as $tc){
             $tableName = $tc[0];
             echo "Working on {$tableName}\n";
-            $tableInfo = db($this->profile)->query("SHOW FULL COLUMNS FROM #?", $tableName)->fetchAllAssoc();
-            $tableClassName = $this->getTableClassName($tableName);
-            $className = $this->getClassName($tableName);
+            $tableInfo = new TableInfo($this, $tableName);
+            $tableColumns = db($this->profile)->query("SHOW FULL COLUMNS FROM #?", $tableName)->fetchAllAssoc();
+            $tableClassName = $tableInfo->tableClassName;
+            $className = $tableInfo->className;
             $pk = [];
             $generated = [];
-            foreach($tableInfo as $tableField){
+            foreach($tableColumns as $tableField){
                 if($tableField['Key'] == 'PRI'){
                     $pk[] = sprintf("'%s'", $tableField['Field']);
                 }
@@ -35,33 +37,16 @@ class Mysql extends Basic {
                 }
             }
 
-            if (isset($this->config->namespace)) {
-                $namespace = $this->config->namespace;
-                $namespacePath = $this->namespaceToPath($namespace);
-            } else {
-                $namespace = null;
-                $namespacePath = '';
-            }
-
+            $namespace = $tableInfo->classNamespace;
+            $tableNamespace = $tableInfo->tableClassNamespace;
             $profile = $this->profile;
             ob_start();
             require DAL_PATH . '/templates/mysql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->targetDir . "$namespacePath/Table/{$tableClassName}.php";
-            $classPath = $this->targetDir . "$namespacePath/$className.php";
-            if (!is_dir(dirname($tableClassPath))) {
-                mkdir(dirname($tableClassPath), 0755, true);
-            }
-            file_put_contents($tableClassPath, $tableClassContent);
-            if (!file_exists($classPath)) {
-                ob_start();
-                require DAL_PATH . '/templates/mysql/class.tpl';
-                $classContent = sprintf("<?php \n\n%s", ob_get_clean());
-                if (!is_dir(dirname($classPath))) {
-                    mkdir(dirname($classPath), 0755, true);
-                }
-                file_put_contents($classPath, $classContent);
-            }
+            ob_start();
+            require DAL_PATH . '/templates/mysql/class.tpl';
+            $classContent = sprintf("<?php \n\n%s", ob_get_clean());
+            $tableInfo->writeFiles($tableClassContent, $classContent);
         }
 
         echo "Done\n";

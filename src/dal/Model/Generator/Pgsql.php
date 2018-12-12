@@ -16,6 +16,8 @@ class Pgsql extends Basic
     function run()
     {
 
+        $this->searchExistingClassFiles();
+
         $tables = db($this->profile)->query("SELECT table_schema,table_name
             FROM information_schema.tables
             WHERE table_schema = ?
@@ -25,6 +27,7 @@ class Pgsql extends Basic
         foreach ($tables as $tc) {
             $tableName = $tc['table_name'];
             echo "Working on {$tableName}\n";
+            $tableInfo = new TableInfo($this, $tableName);
             $tableColumns = db($this->profile)->query("SELECT *
                 FROM information_schema.columns
                 WHERE table_schema = ?
@@ -46,8 +49,8 @@ class Pgsql extends Basic
                 ORDER BY table_schema, table_name", 'public', $tableName
             )->fetchAllAssoc();
 
-            $tableClassName = $this->getTableClassName($tableName);
-            $className = $this->getClassName($tableName);
+            $tableClassName = $tableInfo->tableClassName;
+            $className = $tableInfo->className;
             $pk = [];
             $generated = [];
             $sequences = [];
@@ -71,34 +74,16 @@ class Pgsql extends Basic
             }
 
             $sequences = implode(', ', $sequences);
-
-            if (isset($this->config->namespace)) {
-                $namespace = $this->config->namespace;
-                $namespacePath = $this->namespaceToPath($namespace);
-            } else {
-                $namespace = null;
-                $namespacePath = '';
-            }
-
             $profile = $this->profile;
+            $namespace = $tableInfo->classNamespace;
+            $tableNamespace = $tableInfo->tableClassNamespace;
             ob_start();
             require DAL_PATH . '/templates/pgsql/table-class.tpl';
             $tableClassContent = sprintf("<?php \n\n%s", ob_get_clean());
-            $tableClassPath = $this->targetDir . "$namespacePath/Table/{$tableClassName}.php";
-            $classPath = $this->targetDir . "$namespacePath/$className.php";
-            if (!is_dir(dirname($tableClassPath))) {
-                mkdir(dirname($tableClassPath), 0755, true);
-            }
-            file_put_contents($tableClassPath, $tableClassContent);
-            if (!file_exists($classPath)) {
-                ob_start();
-                require DAL_PATH . '/templates/pgsql/class.tpl';
-                $classContent = sprintf("<?php \n\n%s", ob_get_clean());
-                if (!is_dir(dirname($classPath))) {
-                    mkdir(dirname($classPath), 0755, true);
-                }
-                file_put_contents($classPath, $classContent);
-            }
+            ob_start();
+            require DAL_PATH . '/templates/pgsql/class.tpl';
+            $classContent = sprintf("<?php \n\n%s", ob_get_clean());
+            $tableInfo->writeFiles($tableClassContent, $classContent);
         }
 
         echo "Done\n";
