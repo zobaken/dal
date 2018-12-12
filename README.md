@@ -150,6 +150,9 @@ $generator = \Dal\Model\GeneratorFactory::createGenerator('model');
 $generator->run();
 ```
 
+You can modify your model classes and if data structure is changed - run generator again.
+Model classes will not be overwritten, only their prototype classes. 
+
 ## Basic usage
 
 Its your responsibility to load model classes using `spl_autoload_register` function or whatever method
