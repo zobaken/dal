@@ -19,12 +19,15 @@ namespace Dal\Query;
  * @method \Dal\Query\Basic dropDatabase(...$arguments) Select statement
  * @method \Dal\Query\Basic dropTable(...$arguments) Select statement
  * @method \Dal\Query\Basic from(...$arguments) Select statement
+ * @method \Dal\Query\Basic groupBy(...$arguments) Select statement
+ * @method \Dal\Query\Basic having(...$arguments) Select statement
  * @method \Dal\Query\Basic insert(...$arguments) Select statement
- * @method \Dal\Query\Basic insertInto(...$arguments) Select statement
+ * @method \Dal\Query\Basic insertInto(...$arguments) Sele  ct statement
  * @method \Dal\Query\Basic into(...$arguments) Select statement
  * @method \Dal\Query\Basic not(...$arguments) Select statement
  * @method \Dal\Query\Basic null(...$arguments) Select statement
  * @method \Dal\Query\Basic or(...$arguments) Select statement
+ * @method \Dal\Query\Basic orderBy(...$arguments) Select statement
  * @method \Dal\Query\Basic replace(...$arguments) Select statement
  * @method \Dal\Query\Basic rollback(...$arguments) Select statement
  * @method \Dal\Query\Basic select(...$arguments) Select statement
