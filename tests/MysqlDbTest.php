@@ -17,6 +17,11 @@ class MysqlDbTest extends TestCase {
     }
 
     function testConnection() {
+        // We need to do this stupid thing for creating database if its not exists
+        $this->config = json_decode(file_get_contents(__DIR__ . '/helper/config_mysql_empty.json'));
+        Dal\Dal::reset();
+        Dal\Dal::setConfiguration($this->config);
+
         Dal\Dal::setDefaultProfile('default');
         $databaseExists = db()->q('SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?', $this->dbname)->fetchCell();
         if ($databaseExists) {
@@ -26,6 +31,11 @@ class MysqlDbTest extends TestCase {
         $this->assertTrue(db()->q('USE #?', $this->dbname)->exec());
 
         $this->createTestTable();
+
+        // And this stupid thing because constructor called for every method before actually run them in test suite
+        $this->config = json_decode(file_get_contents(__DIR__ . '/helper/config.json'));
+        Dal\Dal::reset();
+        Dal\Dal::setConfiguration($this->config);
     }
 
     function testInsertSelect() {

@@ -1,11 +1,32 @@
 {
   "name": "zobaken/daltron",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "PHP database abstraction layer",
   "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "Nikolay Neizvesny",
+      "email": "zobaken@gmail.com",
+      "role": "Creator"
+    }
+  ],
+  "keywords": [
+    "php",
+    "database",
+    "db",
+    "layer",
+    "abstraction",
+    "model",
+    "query",
+    "mysql",
+    "mariadb",
+    "pgsql",
+    "postgres"
+  ],
   "require": {
     "php": ">=7.0",
+    "zobaken/helpers": "0.1",
     "zobaken/inflector": "4.2.2"
   },
   "autoload": {
