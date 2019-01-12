@@ -7,33 +7,35 @@ namespace Dal\Query;
  *
  * @TODO Add 'insertRow', 'updateRow' methods
  *
- * @method \Dal\Query\Basic and(...$arguments) Select statement
- * @method \Dal\Query\Basic begin(...$arguments) Select statement
- * @method \Dal\Query\Basic commit(...$arguments) Select statement
- * @method \Dal\Query\Basic create(...$arguments) Select statement
- * @method \Dal\Query\Basic createDatabase(...$arguments) Select statement
- * @method \Dal\Query\Basic createTable(...$arguments) Select statement
- * @method \Dal\Query\Basic delete(...$arguments) Select statement
- * @method \Dal\Query\Basic deleteFrom(...$arguments) Select statement
- * @method \Dal\Query\Basic drop(...$arguments) Select statement
- * @method \Dal\Query\Basic dropDatabase(...$arguments) Select statement
- * @method \Dal\Query\Basic dropTable(...$arguments) Select statement
- * @method \Dal\Query\Basic from(...$arguments) Select statement
- * @method \Dal\Query\Basic groupBy(...$arguments) Select statement
- * @method \Dal\Query\Basic having(...$arguments) Select statement
- * @method \Dal\Query\Basic insert(...$arguments) Select statement
- * @method \Dal\Query\Basic insertInto(...$arguments) Sele  ct statement
- * @method \Dal\Query\Basic into(...$arguments) Select statement
- * @method \Dal\Query\Basic not(...$arguments) Select statement
- * @method \Dal\Query\Basic null(...$arguments) Select statement
- * @method \Dal\Query\Basic or(...$arguments) Select statement
- * @method \Dal\Query\Basic orderBy(...$arguments) Select statement
- * @method \Dal\Query\Basic replace(...$arguments) Select statement
- * @method \Dal\Query\Basic rollback(...$arguments) Select statement
- * @method \Dal\Query\Basic select(...$arguments) Select statement
- * @method \Dal\Query\Basic set(...$arguments) Select statement
- * @method \Dal\Query\Basic update(...$arguments) Select statement
- * @method \Dal\Query\Basic where(...$arguments) Select statement
+ * @method \Dal\Query\Basic and(...$arguments) Method hint
+ * @method \Dal\Query\Basic begin(...$arguments) Method hint
+ * @method \Dal\Query\Basic commit(...$arguments) Method hint
+ * @method \Dal\Query\Basic create(...$arguments) Method hint
+ * @method \Dal\Query\Basic createDatabase(...$arguments) Method hint
+ * @method \Dal\Query\Basic createTable(...$arguments) Method hint
+ * @method \Dal\Query\Basic delete(...$arguments) Method hint
+ * @method \Dal\Query\Basic deleteFrom(...$arguments) Method hint
+ * @method \Dal\Query\Basic drop(...$arguments) Method hint
+ * @method \Dal\Query\Basic dropDatabase(...$arguments) Method hint
+ * @method \Dal\Query\Basic dropTable(...$arguments) Method hint
+ * @method \Dal\Query\Basic from(...$arguments) Method hint
+ * @method \Dal\Query\Basic groupBy(...$arguments) Method hint
+ * @method \Dal\Query\Basic having(...$arguments) Method hint
+ * @method \Dal\Query\Basic insert(...$arguments) Method hint
+ * @method \Dal\Query\Basic insertInto(...$arguments) Method hint
+ * @method \Dal\Query\Basic into(...$arguments) Method hint
+ * @method \Dal\Query\Basic limit(...$arguments) Method hint
+ * @method \Dal\Query\Basic not(...$arguments) Method hint
+ * @method \Dal\Query\Basic null(...$arguments) Method hint
+ * @method \Dal\Query\Basic offset(...$arguments) Method hint
+ * @method \Dal\Query\Basic or(...$arguments) Method hint
+ * @method \Dal\Query\Basic orderBy(...$arguments) Method hint
+ * @method \Dal\Query\Basic replace(...$arguments) Method hint
+ * @method \Dal\Query\Basic rollback(...$arguments) Method hint
+ * @method \Dal\Query\Basic select(...$arguments) Method hint
+ * @method \Dal\Query\Basic set(...$arguments) Method hint
+ * @method \Dal\Query\Basic update(...$arguments) Method hint
+ * @method \Dal\Query\Basic where(...$arguments) Method hint
  */
 abstract class Basic {
 
